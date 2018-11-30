@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ritz Theater Sales Database: {{ title }}</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+</head>
+<div>
+
+
+  <h1>{{ title }}</h1>
+  <p>{{ message }}</p>
+
+  <table style="width:100%" border="1">
+	<tr>
+	  {% for key in keys %}
+		<th> {{ key }} </th>
+	{% endfor %}
+	</tr>
+	  {% for row in result.items() %}
+		<tr>
+	  	{% for val in row[1] %}
+			<td> {{ val }} </td>
+	  {% endfor %}
+		</tr>
+	{% endfor %}
+  </table>
+
+</div>
+</html>
