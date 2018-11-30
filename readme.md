@@ -8,4 +8,4 @@ Current Version Known Issues: The only functional portions of the UI are those t
 
 What we see as the tasks left to do and a priority: 1. Get the UI fully functional, including the ability to pass parameterized link requests 2. Update the help file 3. Change the html structure to use less pages by using the "extends" funciton 4. Make it pretty, implement CSS and UI design 5. Write the documentation 6. Add in some other visualizations through Tableau or some other UI 7. Get the add record functions functional
 
-We have included the current version of our API (ritz_sales_api_v2.py) along with a previous version (ritz_sales_api_v1.py) to show the changes as it has evolved. v2 is version 6 of our API at this point. The differing file names are the result of working across multiple computers, and in a group without using a resource like Github until now.
+We have included the current version of our API minus the connection string. Changes will be made to it if we can get the add records functions operating.
