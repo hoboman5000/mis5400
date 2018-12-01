@@ -19,8 +19,8 @@ import datetime
 
 #  database connection
 server = '********'
-database = '********'
-username = '********'
+database = '*********'
+username = '*********'
 password = '********'
 driver = '{ODBC Driver 17 for SQL Server}'
 
@@ -62,15 +62,27 @@ def teardown_request(exception):
 def default_page():
     return render_template('index.html',
                            title='Home Page',
-                           message='Welcome to the Ritz Theater Sales Database Web API'
+                           message='Welcome to the Ritz Theater Sales Database Web API',
+                           mimetype='text/html'
                            ), 200
 
 
-#  Default Page
+#  Help Page
 @app.route('/help')
 def api_help():
-    return render_template('ritz_theater_api_default.html',
-                           title='Help Page'
+    return render_template('api_help.html',
+                           title='Help Page',
+                           mimetype='text/html'
+                           ), 200
+
+
+# Add Records Home
+@app.route('/add_records')
+def add_records():
+    return render_template('add_records.html',
+                           title='Add Database Records Home',
+                           message='Ways to Add Records to the Database',
+                           mimetype='text/html'
                            ), 200
 
 
@@ -133,7 +145,7 @@ def execute_commit_ops(query):
 def get_ticket_sales():
     query = """select * from Ticket_Sales"""
     query_result = execute_query(query)
-    return Response(render_template('tickets.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -154,7 +166,7 @@ def get_ticket_sales():
 def get_single_ticket_sale(gross_id):
     query = f"""select * from Ticket_Sales where GrossID = {gross_id}"""
     query_result = execute_query(query)
-    return Response(render_template('ticket_id.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -189,7 +201,7 @@ def delete_ticket_sale(gross_id):
 def get_concession_sales():
     query = """select * from Concession_Sales"""
     query_result = execute_query(query)
-    return Response(render_template('concessions.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -203,7 +215,7 @@ def get_concession_sales():
 def get_single_concession_sale(con_id):
     query = f"""select * from Concession_Sales where ConSaleID = {con_id}"""
     query_result = execute_query(query)
-    return Response(render_template('concessions_id.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -236,7 +248,7 @@ def delete_concession_sale(con_id):
 def get_employees():
     query = """select * from Employee"""
     query_result = execute_query(query)
-    return Response(render_template('employees.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -250,7 +262,7 @@ def get_employees():
 def get_single_employee(emp_id):
     query = f"""select * from Employee where EmployeeID = {emp_id}"""
     query_result = execute_query(query)
-    return Response(render_template('employee_id.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -264,7 +276,7 @@ def get_single_employee(emp_id):
 def get_active_employees():
     query = """select * from Employee where Active = 'Yes'"""
     query_result = execute_query(query)
-    return Response(render_template('active_employee.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -297,7 +309,7 @@ def delete_employee(emp_id):
 def get_feature():
     query = """select * from Feature"""
     query_result = execute_query(query)
-    return Response(render_template('features.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -311,7 +323,7 @@ def get_feature():
 def get_single_feature(feature_id):
     query = f"""select * from Feature where FeatureID = {feature_id}"""
     query_result = execute_query(query)
-    return Response(render_template('feature_id.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -344,7 +356,7 @@ def delete_feature(feature_id):
 def get_sales():
     query = """select * from Sales"""
     query_result = execute_query(query)
-    return Response(render_template('sales.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -373,7 +385,12 @@ def get_sales():
 def get_report():
     query = """select * from BoxOfficeReport"""
     query_result = execute_query(query)
-    return Response(render_template('all_box_reports.html',
+    #  round Decimal results of currency columns to 2 places
+    for i in range(0, len(query_result[1])):
+        query_result[1][i][6] = round(query_result[1][i][6], 2)
+        query_result[1][i][7] = round(query_result[1][i][7], 2)
+        query_result[1][i][8] = round(query_result[1][i][8], 2)
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -392,7 +409,12 @@ def get_single_bo_report(show_date, show_time, show_title):
     query = f"""select * from BoxOfficeReport where Date = '{date_string}' and ShowTime = '{show_time}' and"""\
             f"""ShowTitle like '{show_title}'"""
     query_result = execute_query(query)
-    return Response(render_template('single_bo_report.html',
+    #  round Decimal results of currency columns to 2 places
+    for i in range(0, len(query_result[1])):
+        query_result[1][i][6] = round(query_result[1][i][6], 2)
+        query_result[1][i][7] = round(query_result[1][i][7], 2)
+        query_result[1][i][8] = round(query_result[1][i][8], 2)
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -431,7 +453,12 @@ def get_bo_report_range(first_date, last_date, show_title):
 def get_single_bo_report_feature(show_title):
     query = f"""select * from BoxOfficeReport where ShowTitle like '{show_title}'"""
     query_result = execute_query(query)
-    return Response(render_template('bo_report_feature.html',
+    #  round Decimal results of currency columns to 2 places
+    for i in range(0, len(query_result[1])):
+        query_result[1][i][6] = round(query_result[1][i][6], 2)
+        query_result[1][i][7] = round(query_result[1][i][7], 2)
+        query_result[1][i][8] = round(query_result[1][i][8], 2)
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -445,7 +472,12 @@ def get_single_bo_report_feature(show_title):
 def get_bo_report_rating(rating):
     query = f"""select * from BoxOfficeReport where Rating like '{rating}'"""
     query_result = execute_query(query)
-    return Response(render_template('bo_report_rating.html',
+    #  round Decimal results of currency columns to 2 places
+    for i in range(0, len(query_result[1])):
+        query_result[1][i][6] = round(query_result[1][i][6], 2)
+        query_result[1][i][7] = round(query_result[1][i][7], 2)
+        query_result[1][i][8] = round(query_result[1][i][8], 2)
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -459,7 +491,12 @@ def get_bo_report_rating(rating):
 def get_bo_report_distributor(distributor):
     query = f"""select * from BoxOfficeReport where Distributor like '{distributor}'"""
     query_result = execute_query(query)
-    return Response(render_template('bo_report_distributor.html',
+    #  round Decimal results of currency columns to 2 places
+    for i in range(0, len(query_result[1])):
+        query_result[1][i][6] = round(query_result[1][i][6], 2)
+        query_result[1][i][7] = round(query_result[1][i][7], 2)
+        query_result[1][i][8] = round(query_result[1][i][8], 2)
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -474,7 +511,7 @@ def get_bo_report_distributor(distributor):
 def get_total_sales():
     query = f"""select * from TotalSales"""
     query_result = execute_query(query)
-    return Response(render_template('total_sales.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -488,7 +525,7 @@ def get_total_sales():
 def get_sales_by_date():
     query = f"""select * from SalesByDate"""
     query_result = execute_query(query)
-    return Response(render_template('sales_by_date.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
@@ -502,7 +539,7 @@ def get_sales_by_date():
 def get_candy_by_date():
     query = f"""select * from CandySalesByDate"""
     query_result = execute_query(query)
-    return Response(render_template('candy_by_date.html',
+    return Response(render_template('report_temp.html',
                                     result=query_result[1],
                                     keys=query_result[0],
                                     mimetype='text/html',
