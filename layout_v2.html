@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<title>Ritz Theater Sales Database: {{ title }}</title>
+<style>
+/* The navigation menu */
+.navbar {
+  overflow: hidden;
+  background-color: #333;
+}
+
+/* Navigation links */
+.navbar a {
+  float: left;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* The subnavigation menu */
+.subnav {
+  float: left;
+  overflow: hidden;
+}
+
+/* Subnav button */
+.subnav .subnavbtn {
+  font-size: 16px; 
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+/* Add a red background color to navigation links on hover */
+.navbar a:hover, .subnav:hover .subnavbtn {
+  background-color: red;
+}
+
+/* Style the subnav content - positioned absolute */
+.subnav-content {
+  display: none;
+  position: absolute;
+  left: 0;
+  background-color: red;
+  width: 100%;
+  z-index: 1;
+}
+
+/* Style the subnav links */
+.subnav-content a {
+  float: left;
+  color: white;
+  text-decoration: none;
+}
+
+/* Add a grey background color on hover */
+.subnav-content a:hover {
+  background-color: #eee;
+  color: black;
+}
+
+/* When you move the mouse over the subnav container, open the subnav content */
+.subnav:hover .subnav-content {
+  display: block;
+}
+
+/* The sticky class is added to the navbar with JS when it reaches its scroll position */
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+/* Add some top padding to the page content to prevent sudden quick movement (as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
+.sticky + .content {
+  padding-top: 60px;
+}
+
+</style>
+</head>
+<body>
+
+
+<div id="navbar">
+	<div class="navbar">
+		<a href="{{ url_for('default_page') }}">Home</a>
+		<div class="subnav">
+			<button class="subnavbtn">Basic Reports
+				<i class="fa fa-caret-down"></i>
+			</button>
+			<div class="subnav-content">
+				<a href="{{ url_for('get_ticket_sales') }}">All Ticket Sales</a>
+				<a href="{{ url_for('get_concession_sales') }}">All Concessions Sales</a>
+				<a href="{{ url_for('get_employees') }}">List of All Employees</a>
+				<a href="{{ url_for('get_active_employees') }}">List of All Active Employees</a>
+				<a href="{{ url_for('get_feature') }}">List of All Features</a>
+				<a href="{{ url_for('get_sales') }}">List of Combined Sales</a>
+			</div>
+		</div>
+		<div class="subnav">
+			<button class="subnavbtn">Box Office Reports
+				<i class="fa fa-caret-down"></i>
+			</button>
+			<div class="subnav-content">
+				<a href="{{ url_for('get_report') }}">List of All Box Office Reports</a>
+			</div>
+		</div>
+		<a href="{{ url_for('add_records') }}">Adding Records</a>
+		<a href="{{ url_for('api_help') }}" style="float: right">API Help</a>
+	</div>
+</div>
+
+<script>
+window.onscroll = function() {myFunction()};
+var navbar = document.getElementById("navbar");
+var sticky = navbar.offsetTop;
+function myFunction() {
+  if (window.pageYOffset >= sticky) {
+    navbar.classList.add("sticky")
+  } else {
+    navbar.classList.remove("sticky");
+  }
+}
+</script>
+
+<br>
+<br>
+<div class="header">
+  <h1 align="center">{{ title }}</h1>
+  <p align="center">{{ message }}</p>
+</div>
+
+{% block content %}{% endblock %}
+
+</body>
+</div>
+</html>
